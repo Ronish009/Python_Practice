@@ -62,4 +62,7 @@ print("Reverse List : ",num6[::-1])
 
 #Copy the List
 num7=num6.copy()
+num8=num6
+num6.append(100);
 print("Copy List : ",num7)
+print("Copy List : ",num8)

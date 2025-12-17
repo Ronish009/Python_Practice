@@ -24,3 +24,4 @@ num=int(input("Enter any number : "))
 while num>0:
     print(num)
     num-=1
+

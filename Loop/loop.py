@@ -45,11 +45,11 @@ k=6
 for i in res:
     print(i(k))
 
-
+'''
 k=int(input("Enter the number to find the fictorial"))
 res=lambda k:1 if k==0 else k * res(k-1)
 print(res(k))
-
+'''
 
 from functools import reduce
 
@@ -76,14 +76,27 @@ k1=list(map(lambda x:int(x),s))
 print(k1)
 
 
-nums = ["1", "2", "3", "4","1","7"]
+nums = ["123", "2", "3", "4","1","7"]
 print("Map")
 def string_to_int(s):
     num = 0
     for ch in s:
-        num = (ord(ch) - ord('0'))
+        num = num*10 +(ord(ch) - ord('0'))
         print(num)
     return num
 
 result = map(string_to_int, nums)
 print(list(result))
+
+'''
+This is comment
+'''
+"""
+This is comment1
+"""
+
+"""
+s="ronish"
+k=float(s)
+print(k)
+"""
