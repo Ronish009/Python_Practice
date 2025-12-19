@@ -39,4 +39,18 @@ row3 -> 0.060
 
 cosine distance : 1 - cosine simliarty
 
+#Install psycopg2
+pip install psycopg2-binary
+
+
+uvicorn api:app --reload
+
+Explanation:
+
+api → file name (api.py)
+
+app → FastAPI instance (app = FastAPI())
+
+--reload → auto-restart on code changes
+
 

@@ -1,0 +1,26 @@
+#Create Virtual Environment:
+python -m venv venv
+
+#Activate:
+venv\Scripts\activate
+
+#Install FastAPI and Uvicorn
+pip install fastapi uvicorn
+
+FastAPI → the framework
+Uvicorn → server to run FastAPI
+
+
+#to show whether it is installed or not
+pip show fastapi
+pip show uvicorn
+
+
+File "C:\Users\rshandil\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 116, in ensure_multipart_is_installed
+    raise RuntimeError(multipart_not_installed_error) from None
+RuntimeError: Form data requires "python-multipart" to be installed.
+You can install "python-multipart" with:
+
+pip install python-multipart
+
+ypeError: Failed to execute 'fetch' on 'Window': Request with GET/HEAD method cannot have body.
