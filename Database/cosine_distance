@@ -1,0 +1,42 @@
+1	"row1"	"[10,1]"
+2	"row2"	"[-1,10]"
+3	"row3"	"[2,5]"
+
+
+cur.execute(query, ("[2,2]",))
+
+query="""
+SELECT id, name, embedding
+    FROM my_cosine
+    ORDER BY embedding <=> %s
+    LIMIT 2
+"""
+
+Compute cosine similarity (key rows) <=>
+
+
+
+Steps: First find dot product
+
+row1 22
+row2 18
+row3 14
+
+Steps : Find Mode
+
+
+|2,2| - > 8
+|10,1| -> 101
+[-1,10] ->101
+|2,5| -> 29
+
+
+cosine simliarty : dotproduct / (mode of Order by) (Mode of column )
+
+row1  -> 0.027
+row2 -> 0.022
+row3 -> 0.060
+
+cosine distance : 1 - cosine simliarty
+
+
