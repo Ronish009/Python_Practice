@@ -1,0 +1,14 @@
+pip install requests
+
+pypi.org
+
+pip install openai
+
+pip install numpy
+
+Basic pip command
+1. Install a package : pip install request
+2. List Installed Package : pip list
+3. update to specific version : pip install request=-2.45.0
+4. uninstall a package : pip uninstall request
+5.

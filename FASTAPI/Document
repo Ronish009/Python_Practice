@@ -24,3 +24,8 @@ You can install "python-multipart" with:
 pip install python-multipart
 
 ypeError: Failed to execute 'fetch' on 'Window': Request with GET/HEAD method cannot have body.
+
+
+pip install pydantic[email]
+
+ctrl+alt+l = clean indentation
