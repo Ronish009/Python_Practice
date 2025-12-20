@@ -29,3 +29,45 @@ ypeError: Failed to execute 'fetch' on 'Window': Request with GET/HEAD method ca
 pip install pydantic[email]
 
 ctrl+alt+l = clean indentation
+
+
+pip install pylint
+
+"""
+FeedBack Information
+====================
+1. FeedBack Id : Unique Id
+2. Name : User Name
+3. Email Id : User mail id
+4. Age : User Age
+6. PhoneNumber : User Phone Number
+7. Rating : User Rating
+8. FeedBack Comments :
+9. Creation Date :
+10. Last Updated Date
+
+Validation
+Phone Number : it contains 10 digit, all the should be number
+Feedback Comment : it should not be exceeded with 35 character
+User Rating : Range is 1 tp 10
+Name : it contains only alphabat
+Email Id : it should be valid
+Age : it should be number and greater than 0
+
+"""
+
+
+"""
+def validate_feedback(feed: Feedback):
+    if not (1 <= feed.rating <= 10):
+        raise HTTPException(status_code=460, detail="Rating must be between 1 and 10")
+
+    if len(feed.feedback_comments) > 35:
+        raise HTTPException(status_code=460, detail="Comments length must be less than 35")
+
+def get_feedback(feed: Feedback = Depends(validate_feedback)):
+
+    if not feed.name.isalpha():
+        raise HTTPException(status_code=460, detail="Name must contain only alphabets")
+
+"""

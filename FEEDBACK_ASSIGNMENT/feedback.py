@@ -1,46 +1,21 @@
-from dataclasses import field
-
-from email_validator import EmailNotValidError
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel, validate_email, EmailStr, validator, field_validator
-import psycopg2
+"""FeedBack Management"""
 import re
-
-"""
-FeedBack Information
-====================
-1. FeedBack Id : Unique Id
-2. Name : User Name
-3. Email Id : User mail id
-4. Age : User Age
-6. PhoneNumber : User Phone Number
-7. Rating : User Rating
-8. FeedBack Comments : 
-9. Creation Date :
-10. Last Updated Date
-
-Validation
-Phone Number : it contains 10 digit, all the should be number
-Feedback Comment : it should not be exceeded with 35 character
-User Rating : Range is 1 tp 10
-Name : it contains only alphabat
-Email Id : it should be valid
-Age : it should be number and greater than 0
-
-"""
-
+import psycopg2
+from pydantic import BaseModel, EmailStr, field_validator
+from fastapi import FastAPI, HTTPException
 
 def get_db_connection():
+    """"DbConnection"""
     return psycopg2.connect(
         "postgresql://postgres:ronish@localhost:5432/postgres"
     )
 
 
-query = """
+QUERY = """
         CREATE TABLE IF NOT EXISTS user_feedback
         (
             feedback_id       SERIAL PRIMARY KEY,
-            user_name              TEXT NOT NULL,
+            user_name         TEXT NOT NULL,
             email_id          TEXT NOT NULL,
             age               INTEGER CHECK (age > 0),
             phone_number      VARCHAR(15),
@@ -52,7 +27,7 @@ query = """
         """
 con = get_db_connection()
 cur = con.cursor()
-cur.execute(query)
+cur.execute(QUERY)
 con.commit()
 con.close()
 print("Table created successfully")
@@ -67,13 +42,14 @@ tags_metadata = [
 app = FastAPI(
     title="Feedback Management API",
     description="APIs to create, view, update and delete user feedback",
-    version="1.0.0",
+    version="26.6.0",
     openapi_tags=tags_metadata,
     docs_url="/ronish",
 )
 
 
 class Feedback(BaseModel):
+    """Request for Feedback"""
     user_name: str
     email_id: EmailStr
     age: int
@@ -82,58 +58,54 @@ class Feedback(BaseModel):
     feedback_comments: str
 
     @field_validator('age')
+    @classmethod
     def age_must_be_positive(cls, v):
+        """Validation of age"""
         if v <= 0:
             raise ValueError("Age must be a positive number")
         return v
 
     @field_validator("rating")
+    @classmethod
     def rating_range(cls, v):
-        if not (1 <= v <= 10):
+        """Validation of rating"""
+        if not 1 <= v <= 10:
             raise ValueError("Rating must be between 1 and 10")
         return v
 
     @field_validator("feedback_comments")
+    @classmethod
     def comment_length(cls, v):
+        """Validation of feedback comments"""
         if len(v) > 35:
             raise ValueError("Comments length must be <= 35")
         return v
 
     @field_validator("user_name")
+    @classmethod
     def validate_name(cls, v):
+        """Validation of User"""
         if not re.fullmatch(r"[A-Za-z ]+", v):
             raise ValueError("User Name must contain only alphabets and spaces")
         return v
 
 
 class FeedbackCommentUpdate(BaseModel):
+    """Request to update the Feedback"""
     feedback_comments: str
 
     @field_validator("feedback_comments")
+    @classmethod
     def comment_length(cls, v):
+        """Validation of comments for updating the comment"""
         if len(v) > 35:
             raise ValueError("Comments length must be <= 35")
         return v
 
 
-"""
-def validate_feedback(feed: Feedback):
-    if not (1 <= feed.rating <= 10):
-        raise HTTPException(status_code=460, detail="Rating must be between 1 and 10")
-
-    if len(feed.feedback_comments) > 35:
-        raise HTTPException(status_code=460, detail="Comments length must be less than 35")
-
-def get_feedback(feed: Feedback = Depends(validate_feedback)):
-
-    if not feed.name.isalpha():
-        raise HTTPException(status_code=460, detail="Name must contain only alphabets")
-
-"""
-
-
 @app.post("/feedback/add", tags=["Feedback"])
 def add_feedback(feed: Feedback):
+    """API to add the Feedback Details"""
     user_name = feed.user_name
     email_id = feed.email_id
     age = feed.age
@@ -186,13 +158,16 @@ def add_feedback(feed: Feedback):
             "status": "Feedback created Successfully"
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 @app.get("/feedback/getAll", tags=["Feedback"])
 def get_all_feedback():
+    """API to get all the Feedback Details"""
     conn = None
     cursor = None
     try:
@@ -226,13 +201,16 @@ def get_all_feedback():
             "data": result
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 @app.get("/feedback/{feedback_id}", tags=["Feedback"])
 def get_feedback(feedback_id: int):
+    """API to get the Feedback details using feedback id"""
     conn = None
     cursor = None
     try:
@@ -264,12 +242,58 @@ def get_feedback(feedback_id: int):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
-        cursor.close()
-        conn.close()
-@app.delete("/feedback/{feedback_id}", tags=["Feedback"])
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.patch("/feedback/comment/{feedback_id}", tags=["Feedback"])
+def update_feedback_comment(feedback_id: int, data: FeedbackCommentUpdate):
+    """API to update the Feedback using feedback id"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+                SELECT feedback_comments,user_name
+                from user_feedback
+                WHERE feedback_id = %s; \
+                """
+        cursor.execute(query, (feedback_id,))
+        feedback = cursor.fetchone()
+        if feedback is None:
+            raise HTTPException(status_code=404, detail="Feedback not found")
+
+        update_query = """
+                   UPDATE user_feedback
+                   SET feedback_comments = %s, updated_date = CURRENT_TIMESTAMP
+                   where feedback_id = %s; \
+                   """
+        cursor.execute(update_query, (data.feedback_comments, feedback_id))
+        conn.commit()
+        return {
+            "status": "Feedback Updated Successfully",
+            "user_name": feedback[1],
+            "old Feedback": feedback[0],
+            "new Feedback": data.feedback_comments,
+            "code": 200
+         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.delete("/feedback/remove/{feedback_id}", tags=["Feedback"])
 def delete_feedback(feedback_id: int):
+    """Delete the Feedback"""
     conn = None
     cursor = None
     try:
@@ -293,47 +317,9 @@ def delete_feedback(feedback_id: int):
             "code": 200
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
-        cursor.close()
-        conn.close()
-
-
-@app.patch("/feedback/comment/{feedback_id}", tags=["Feedback"])
-def update_feedback_comment(feedback_id: int, data: FeedbackCommentUpdate):
-    conn = None
-    cursor = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        query = """
-                SELECT feedback_comments,user_name
-                from user_feedback
-                WHERE feedback_id = %s; \
-                """
-        cursor.execute(query, (feedback_id,))
-        feedback = cursor.fetchone()
-        if feedback is None:
-            raise HTTPException(status_code=404, detail="Feedback not found")
-
-        update_query = """
-                   UPDATE user_feedback
-                   SET feedback_comments = %s, updated_date = CURRENT_TIMESTAMP
-                   where feedback_id = %s; \
-                   """
-        cursor.execute(update_query, (data.feedback_comments, feedback_id))
-        conn.commit()
-        record = cursor.rowcount
-        return {
-            "status": "Feedback Updated Successfully",
-            "user_name": feedback[1],
-            "old Feedback": feedback[0],
-            "new Feedback": data.feedback_comments,
-            "code": 200
-         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        cursor.close()
-        conn.close()
-
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
