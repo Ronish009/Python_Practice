@@ -1,0 +1,21 @@
+"""
+index = df.groupby('department')['salary'].idxmax()
+result=df.loc[index,:]
+print(result)
+"""
+"""
+index = df.groupby('department')['salary'].idxmax()
+result=df.loc[index,['department', 'salary', 'emp_name']]
+print(result)
+"""
+
+
+"""
+print("find for each department, "
+      "the employee with the highest salary (By Lamda Expression) : \n")
+print(df.sort_values(by='salary', ascending=False).groupby('department').apply(lambda x: x.loc[x['salary'].idxmax()]))
+
+
+print("sum the salary for each department :")
+print(df.sort_values(by='salary', ascending=False).groupby("department")['salary'].sum())
+"""
