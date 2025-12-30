@@ -1,0 +1,6 @@
+emp_id,emp_name,salary,department,skills_set,assignedornot,client_name
+75,Ronish,70000,IT,"Python|SQL|Recruitment|GENAI",True,Client_R
+33,Amit,64000,HR,"Recruitment|Communication|Python|GENAI",False,
+13,Charlie,15000,IT,"Java|Spring|SQL|GENAI",True,Client_C
+45,David,90000,Finance,"Accounting|Excel|Java|Python|Recruitment",True,Client_R
+22,Eve,72000,IT,"Python|Data Analysis|Python|GENAI",False,

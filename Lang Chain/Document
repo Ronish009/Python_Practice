@@ -1,0 +1,5 @@
+pip install langchain-core
+
+pip install langchain-core langchain-openai
+
+pip install --upgrade certifi
