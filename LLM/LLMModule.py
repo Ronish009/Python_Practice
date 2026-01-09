@@ -11,7 +11,7 @@ http_client = httpx.Client(verify=False)
 
 # Initialize Groq client
 client = Groq(
-    api_key=os.getenv(""),
+    api_key=os.getenv("RONISH_GROQ_KEY"),
     http_client=http_client
 )
 

@@ -48,3 +48,7 @@ def myFun(*argv):
         print(arg)
 
 myFun('Hello', 'Welcome', 'to', 'GeeksforGeeks')
+
+li = [x for x in range(1, 5) if x%2==0]
+for i in li:
+    print(i)

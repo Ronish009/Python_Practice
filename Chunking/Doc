@@ -1,0 +1,17 @@
+pip install langchain==0.3
+pip install langchain-core==0.3
+pip install langchain-community
+pip install langchain-experimental
+pip install unstructured
+pip install nltk
+pip install tiktoken
+pip install pdfplumber
+
+Cosine similarity ranges from –1 to 1, but for sentence embeddings you usually see:
+
+Cosine value	Meaning
+0.90 – 1.00	Almost identical meaning
+0.75 – 0.90	Very strongly related
+0.60 – 0.75	Related / same topic
+0.40 – 0.60	Loosely related
+< 0.40	Different topics
